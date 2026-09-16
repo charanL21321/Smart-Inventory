@@ -4,7 +4,7 @@ from typing import Dict
 
 from fastapi import FastAPI
 
-from app.api.routes import auth, users
+from app.api.routes import auth, categories, inventory, products, suppliers, users
 from app.core.config import settings
 from app.database.connection import check_db_connection
 
@@ -42,6 +42,10 @@ app = FastAPI(
 # Register API Routers
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/users", tags=["Users"])
+app.include_router(categories.router, prefix="/categories", tags=["Categories"])
+app.include_router(suppliers.router, prefix="/suppliers", tags=["Suppliers"])
+app.include_router(products.router, prefix="/products", tags=["Products"])
+app.include_router(inventory.router, prefix="/inventory", tags=["Inventory"])
 
 
 @app.get("/", tags=["System"])

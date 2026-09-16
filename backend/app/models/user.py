@@ -1,10 +1,15 @@
 from datetime import datetime, timezone
 from enum import Enum
 
+from typing import TYPE_CHECKING, List
+
 from sqlalchemy import Boolean, DateTime, Enum as SQLEnum, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
+
+if TYPE_CHECKING:
+    from app.models.inventory_transaction import InventoryTransaction
 
 
 class UserRole(str, Enum):
@@ -43,6 +48,12 @@ class User(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
         nullable=False,
+    )
+
+    # Relationships
+    inventory_transactions: Mapped[List["InventoryTransaction"]] = relationship(
+        "InventoryTransaction",
+        back_populates="user",
     )
 
     def __repr__(self) -> str:
