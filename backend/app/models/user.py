@@ -1,0 +1,49 @@
+from datetime import datetime, timezone
+from enum import Enum
+
+from sqlalchemy import Boolean, DateTime, Enum as SQLEnum, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.database.base import Base
+
+
+class UserRole(str, Enum):
+    """
+    Role enumeration for user authorization levels.
+    """
+    ADMIN = "ADMIN"
+    INVENTORY_MANAGER = "INVENTORY_MANAGER"
+    WAREHOUSE_STAFF = "WAREHOUSE_STAFF"
+
+
+class User(Base):
+    """
+    SQLAlchemy User model representing platform users.
+    """
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
+    username: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
+    full_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    role: Mapped[UserRole] = mapped_column(
+        SQLEnum(UserRole, name="user_role", native_enum=False, length=30),
+        default=UserRole.WAREHOUSE_STAFF,
+        nullable=False,
+    )
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+    def __repr__(self) -> str:
+        return f"<User id={self.id} username='{self.username}' role='{self.role}'>"
