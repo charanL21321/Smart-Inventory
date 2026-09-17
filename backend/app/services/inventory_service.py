@@ -95,6 +95,98 @@ def get_or_create_inventory(
     return inventory, product
 
 
+def apply_stock_in(
+    db: Session,
+    product_id: int,
+    quantity: int,
+    user_id: int,
+    reference: Optional[str] = None,
+    reason: Optional[str] = None,
+) -> Tuple[Inventory, Product, InventoryTransaction]:
+    """
+    Applies stock increment to inventory and stages a STOCK_IN ledger transaction.
+    Acquires row-level lock on inventory to ensure transactional integrity.
+    Does NOT commit the database session, allowing caller to compose multiple mutations atomically.
+    """
+    if quantity <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Stock-in quantity must be greater than 0",
+        )
+
+    inventory, product = get_or_create_inventory(db, product_id, lock=True)
+
+    previous_stock = inventory.current_stock
+    resulting_stock = previous_stock + quantity
+    inventory.current_stock = resulting_stock
+
+    transaction = InventoryTransaction(
+        product_id=product_id,
+        transaction_type=TransactionType.STOCK_IN,
+        quantity=quantity,
+        previous_stock=previous_stock,
+        resulting_stock=resulting_stock,
+        reason=reason.strip() if reason else None,
+        reference=reference.strip() if reference else None,
+        performed_by=user_id,
+    )
+    db.add(transaction)
+    return inventory, product, transaction
+
+
+def apply_stock_out(
+    db: Session,
+    product_id: int,
+    quantity: int,
+    user_id: int,
+    reference: Optional[str] = None,
+    reason: Optional[str] = None,
+) -> Tuple[Inventory, Product, InventoryTransaction]:
+    """
+    Applies stock decrement to inventory and stages a STOCK_OUT ledger transaction.
+    Acquires row-level lock on inventory to ensure transactional integrity and prevent negative stock.
+    Does NOT commit the database session, allowing caller to compose multiple mutations atomically.
+    """
+    if quantity <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Stock-out quantity must be greater than 0",
+        )
+
+    inventory, product = get_or_create_inventory(db, product_id, lock=True)
+
+    previous_stock = inventory.current_stock
+    available_stock = previous_stock - inventory.reserved_stock
+
+    if quantity > available_stock:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Insufficient available stock",
+        )
+
+    resulting_stock = previous_stock - quantity
+    if resulting_stock < 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Stock cannot become negative",
+        )
+
+    inventory.current_stock = resulting_stock
+
+    transaction = InventoryTransaction(
+        product_id=product_id,
+        transaction_type=TransactionType.STOCK_OUT,
+        quantity=quantity,
+        previous_stock=previous_stock,
+        resulting_stock=resulting_stock,
+        reason=reason.strip() if reason else None,
+        reference=reference.strip() if reference else None,
+        performed_by=user_id,
+    )
+    db.add(transaction)
+    return inventory, product, transaction
+
+
 def perform_stock_in(
     db: Session,
     data: StockInRequest,
@@ -103,30 +195,15 @@ def perform_stock_in(
     """
     Atomically receives stock, increments inventory balance, and logs a STOCK_IN transaction.
     """
-    if data.quantity <= 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Stock-in quantity must be greater than 0",
-        )
-
     try:
-        inventory, product = get_or_create_inventory(db, data.product_id, lock=True)
-
-        previous_stock = inventory.current_stock
-        resulting_stock = previous_stock + data.quantity
-        inventory.current_stock = resulting_stock
-
-        transaction = InventoryTransaction(
+        inventory, product, _ = apply_stock_in(
+            db=db,
             product_id=data.product_id,
-            transaction_type=TransactionType.STOCK_IN,
             quantity=data.quantity,
-            previous_stock=previous_stock,
-            resulting_stock=resulting_stock,
-            reason=data.reason.strip() if data.reason else None,
-            reference=data.reference.strip() if data.reference else None,
-            performed_by=user_id,
+            user_id=user_id,
+            reference=data.reference,
+            reason=data.reason,
         )
-        db.add(transaction)
         db.commit()
         db.refresh(inventory)
         return to_inventory_response(inventory, product.reorder_point)
@@ -150,44 +227,15 @@ def perform_stock_out(
     Atomically dispatches stock, decrements inventory balance, and logs a STOCK_OUT transaction.
     Ensures stock never drops below 0 or below reserved stock.
     """
-    if data.quantity <= 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Stock-out quantity must be greater than 0",
-        )
-
     try:
-        inventory, product = get_or_create_inventory(db, data.product_id, lock=True)
-
-        previous_stock = inventory.current_stock
-        available_stock = previous_stock - inventory.reserved_stock
-
-        if data.quantity > available_stock:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Insufficient available stock",
-            )
-
-        resulting_stock = previous_stock - data.quantity
-        if resulting_stock < 0:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Stock cannot become negative",
-            )
-
-        inventory.current_stock = resulting_stock
-
-        transaction = InventoryTransaction(
+        inventory, product, _ = apply_stock_out(
+            db=db,
             product_id=data.product_id,
-            transaction_type=TransactionType.STOCK_OUT,
             quantity=data.quantity,
-            previous_stock=previous_stock,
-            resulting_stock=resulting_stock,
-            reason=data.reason.strip() if data.reason else None,
-            reference=data.reference.strip() if data.reference else None,
-            performed_by=user_id,
+            user_id=user_id,
+            reference=data.reference,
+            reason=data.reason,
         )
-        db.add(transaction)
         db.commit()
         db.refresh(inventory)
         return to_inventory_response(inventory, product.reorder_point)

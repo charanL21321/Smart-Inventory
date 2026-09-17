@@ -33,3 +33,9 @@ ENV/
 Thumbs.db
 desktop.ini
 $RECYCLE.BIN/
+
+# Local Node.js binary and Frontend dependencies
+nodejs/
+frontend/node_modules/
+frontend/dist/
+

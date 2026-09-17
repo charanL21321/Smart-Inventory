@@ -16,7 +16,22 @@ from app.services.category_service import (
     get_category_by_name,
     update_category,
 )
+from app.services.forecast_service import (
+    archive_previous_forecasts,
+    build_forecast_explanation,
+    calculate_sma,
+    calculate_wma,
+    generate_all_forecasts,
+    generate_forecast_dates,
+    generate_product_forecast,
+    get_daily_sales_history,
+    get_forecast,
+    get_forecasts,
+    get_product_latest_forecast,
+)
 from app.services.inventory_service import (
+    apply_stock_in,
+    apply_stock_out,
     calculate_inventory_status,
     get_inventory_by_product_id,
     get_inventory_list,
@@ -35,6 +50,31 @@ from app.services.product_service import (
     get_products,
     update_product,
 )
+from app.services.purchase_order_service import (
+    create_purchase_order,
+    generate_order_number,
+    get_purchase_order_by_id,
+    get_purchase_orders,
+    receive_purchase_order,
+    update_purchase_order,
+    update_purchase_order_status,
+)
+from app.services.replenishment_service import (
+    build_replenishment_reason,
+    calculate_average_daily_demand,
+    calculate_base_target,
+    calculate_inventory_position,
+    calculate_lead_time_demand,
+    calculate_priority,
+    calculate_recommended_quantity,
+    dismiss_recommendation,
+    evaluate_product_replenishment,
+    generate_recommendations,
+    get_recommendation_by_id,
+    get_recommendations,
+    review_recommendation,
+)
+from app.services.sales_service import create_sale, get_sale_by_id, get_sales
 from app.services.supplier_service import (
     create_supplier,
     delete_supplier,
@@ -74,6 +114,8 @@ __all__ = [
     # Inventory
     "calculate_inventory_status",
     "get_or_create_inventory",
+    "apply_stock_in",
+    "apply_stock_out",
     "perform_stock_in",
     "perform_stock_out",
     "perform_stock_adjustment",
@@ -81,4 +123,42 @@ __all__ = [
     "get_inventory_list",
     "get_transactions",
     "get_transaction_by_id",
+    # Sales
+    "create_sale",
+    "get_sale_by_id",
+    "get_sales",
+    # Purchase Orders
+    "generate_order_number",
+    "create_purchase_order",
+    "get_purchase_order_by_id",
+    "get_purchase_orders",
+    "update_purchase_order",
+    "update_purchase_order_status",
+    "receive_purchase_order",
+    # Replenishment
+    "calculate_inventory_position",
+    "calculate_average_daily_demand",
+    "calculate_lead_time_demand",
+    "calculate_base_target",
+    "calculate_recommended_quantity",
+    "calculate_priority",
+    "build_replenishment_reason",
+    "evaluate_product_replenishment",
+    "generate_recommendations",
+    "get_recommendation_by_id",
+    "get_recommendations",
+    "review_recommendation",
+    "dismiss_recommendation",
+    # Demand Forecasting
+    "get_daily_sales_history",
+    "calculate_sma",
+    "calculate_wma",
+    "build_forecast_explanation",
+    "generate_forecast_dates",
+    "archive_previous_forecasts",
+    "generate_product_forecast",
+    "generate_all_forecasts",
+    "get_forecast",
+    "get_product_latest_forecast",
+    "get_forecasts",
 ]

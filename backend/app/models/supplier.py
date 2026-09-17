@@ -8,6 +8,8 @@ from app.database.base import Base
 
 if TYPE_CHECKING:
     from app.models.product import Product
+    from app.models.purchase_order import PurchaseOrder
+    from app.models.replenishment_recommendation import ReplenishmentRecommendation
 
 
 class Supplier(Base):
@@ -40,6 +42,16 @@ class Supplier(Base):
     # Relationship to products
     products: Mapped[List["Product"]] = relationship(
         "Product",
+        back_populates="supplier",
+        cascade="none",
+    )
+    purchase_orders: Mapped[List["PurchaseOrder"]] = relationship(
+        "PurchaseOrder",
+        back_populates="supplier",
+        cascade="none",
+    )
+    replenishment_recommendations: Mapped[List["ReplenishmentRecommendation"]] = relationship(
+        "ReplenishmentRecommendation",
         back_populates="supplier",
         cascade="none",
     )

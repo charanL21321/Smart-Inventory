@@ -8,8 +8,12 @@ from app.database.base import Base
 
 if TYPE_CHECKING:
     from app.models.category import Category
+    from app.models.demand_forecast import DemandForecast
     from app.models.inventory import Inventory
     from app.models.inventory_transaction import InventoryTransaction
+    from app.models.purchase_order_item import PurchaseOrderItem
+    from app.models.replenishment_recommendation import ReplenishmentRecommendation
+    from app.models.sale import Sale
     from app.models.supplier import Supplier
 
 
@@ -75,6 +79,26 @@ class Product(Base):
     inventory_transactions: Mapped[List["InventoryTransaction"]] = relationship(
         "InventoryTransaction",
         back_populates="product",
+    )
+    sales: Mapped[List["Sale"]] = relationship(
+        "Sale",
+        back_populates="product",
+        cascade="none",
+    )
+    purchase_order_items: Mapped[List["PurchaseOrderItem"]] = relationship(
+        "PurchaseOrderItem",
+        back_populates="product",
+        cascade="none",
+    )
+    replenishment_recommendations: Mapped[List["ReplenishmentRecommendation"]] = relationship(
+        "ReplenishmentRecommendation",
+        back_populates="product",
+        cascade="none",
+    )
+    demand_forecasts: Mapped[List["DemandForecast"]] = relationship(
+        "DemandForecast",
+        back_populates="product",
+        cascade="none",
     )
 
     def __repr__(self) -> str:

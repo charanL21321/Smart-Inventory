@@ -8,6 +8,22 @@ from app.database.base import Base
 from app.database.connection import engine
 # Import models to ensure they are registered with Base.metadata
 import app.models  # noqa: F401
+from alembic.ddl.impl import DefaultImpl
+from sqlalchemy import Column, MetaData, PrimaryKeyConstraint, String, Table
+
+# Patch alembic version table structure to allow descriptive revision identifiers (>32 chars)
+def _custom_version_table_impl(self, *, version_table: str, version_table_schema: str | None, version_table_pk: bool, **kw):
+    vt = Table(
+        version_table,
+        MetaData(),
+        Column("version_num", String(128), nullable=False),
+        schema=version_table_schema,
+    )
+    if version_table_pk:
+        vt.append_constraint(PrimaryKeyConstraint("version_num", name=f"{version_table}_pkc"))
+    return vt
+
+DefaultImpl.version_table_impl = _custom_version_table_impl
 
 # Alembic Config object
 config = context.config

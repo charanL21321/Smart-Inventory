@@ -10,6 +10,8 @@ from app.database.base import Base
 
 if TYPE_CHECKING:
     from app.models.inventory_transaction import InventoryTransaction
+    from app.models.purchase_order import PurchaseOrder
+    from app.models.sale import Sale
 
 
 class UserRole(str, Enum):
@@ -54,6 +56,23 @@ class User(Base):
     inventory_transactions: Mapped[List["InventoryTransaction"]] = relationship(
         "InventoryTransaction",
         back_populates="user",
+    )
+    sales: Mapped[List["Sale"]] = relationship(
+        "Sale",
+        back_populates="user",
+        cascade="none",
+    )
+    created_purchase_orders: Mapped[List["PurchaseOrder"]] = relationship(
+        "PurchaseOrder",
+        foreign_keys="PurchaseOrder.created_by",
+        back_populates="creator",
+        cascade="none",
+    )
+    approved_purchase_orders: Mapped[List["PurchaseOrder"]] = relationship(
+        "PurchaseOrder",
+        foreign_keys="PurchaseOrder.approved_by",
+        back_populates="approver",
+        cascade="none",
     )
 
     def __repr__(self) -> str:
