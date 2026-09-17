@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from enum import Enum
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from sqlalchemy import (
     CheckConstraint,
@@ -17,6 +17,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.base import Base
 
 if TYPE_CHECKING:
+    from app.models.notification import Notification
     from app.models.product import Product
     from app.models.supplier import Supplier
 
@@ -125,6 +126,11 @@ class ReplenishmentRecommendation(Base):
     supplier: Mapped["Supplier"] = relationship(
         "Supplier",
         back_populates="replenishment_recommendations",
+    )
+    notifications: Mapped[List["Notification"]] = relationship(
+        "Notification",
+        back_populates="replenishment_recommendation",
+        cascade="none",
     )
 
     def __repr__(self) -> str:

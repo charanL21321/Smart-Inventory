@@ -7,6 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.base import Base
 
 if TYPE_CHECKING:
+    from app.models.notification import Notification
     from app.models.product import Product
     from app.models.purchase_order import PurchaseOrder
     from app.models.replenishment_recommendation import ReplenishmentRecommendation
@@ -52,6 +53,11 @@ class Supplier(Base):
     )
     replenishment_recommendations: Mapped[List["ReplenishmentRecommendation"]] = relationship(
         "ReplenishmentRecommendation",
+        back_populates="supplier",
+        cascade="none",
+    )
+    notifications: Mapped[List["Notification"]] = relationship(
+        "Notification",
         back_populates="supplier",
         cascade="none",
     )

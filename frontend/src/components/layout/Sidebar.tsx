@@ -14,6 +14,7 @@ import {
   TrendingUp,
   UserCheck,
   Package,
+  Bell,
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
@@ -40,6 +41,7 @@ export const Sidebar: React.FC = () => {
     { to: '/purchase-orders', label: 'Purchase Orders', icon: ClipboardList },
     { to: '/replenishment', label: 'Replenishment', icon: Sparkles },
     { to: '/forecasts', label: 'Demand Forecasting', icon: TrendingUp },
+    { to: '/notifications', label: 'Notifications', icon: Bell },
     { to: '/profile', label: 'User Profile', icon: UserCheck },
   ];
 

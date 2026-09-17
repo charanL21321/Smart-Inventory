@@ -154,6 +154,32 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className }) =
       label = 'Warehouse Staff';
       break;
 
+    // Notification Types
+    case 'REPLENISHMENT_RECOMMENDATION':
+      variant = 'primary';
+      label = 'Replenishment';
+      break;
+    case 'PURCHASE_ORDER_STATUS':
+      variant = 'info';
+      label = 'PO Status';
+      break;
+    case 'PURCHASE_ORDER_RECEIVED':
+      variant = 'success';
+      label = 'PO Received';
+      break;
+    case 'FORECAST_GENERATED':
+      variant = 'info';
+      label = 'Forecast Generated';
+      break;
+    case 'UNREAD':
+      variant = 'warning';
+      label = 'Unread';
+      break;
+    case 'READ':
+      variant = 'neutral';
+      label = 'Read';
+      break;
+
     default:
       variant = 'neutral';
       label = String(status);

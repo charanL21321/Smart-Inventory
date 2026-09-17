@@ -236,6 +236,8 @@ def perform_stock_out(
             reference=data.reference,
             reason=data.reason,
         )
+        from app.services.notification_service import check_and_trigger_stock_alerts
+        check_and_trigger_stock_alerts(db, data.product_id)
         db.commit()
         db.refresh(inventory)
         return to_inventory_response(inventory, product.reorder_point)
@@ -313,6 +315,8 @@ def perform_stock_adjustment(
             performed_by=user_id,
         )
         db.add(transaction)
+        from app.services.notification_service import check_and_trigger_stock_alerts
+        check_and_trigger_stock_alerts(db, data.product_id)
         db.commit()
         db.refresh(inventory)
         return to_inventory_response(inventory, product.reorder_point)

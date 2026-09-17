@@ -42,6 +42,22 @@ from app.services.inventory_service import (
     perform_stock_in,
     perform_stock_out,
 )
+from app.services.notification_service import (
+    check_and_trigger_stock_alerts,
+    count_unread_notifications,
+    create_forecast_generated_notification,
+    create_low_stock_notification,
+    create_notification,
+    create_out_of_stock_notification,
+    create_purchase_order_received_notification,
+    create_purchase_order_status_notification,
+    create_replenishment_notification,
+    get_notification_by_id,
+    get_target_users,
+    get_user_notifications,
+    mark_all_notifications_read,
+    mark_notification_read,
+)
 from app.services.product_service import (
     create_product,
     delete_product,
@@ -161,4 +177,19 @@ __all__ = [
     "get_forecast",
     "get_product_latest_forecast",
     "get_forecasts",
+    # Notifications
+    "create_notification",
+    "create_low_stock_notification",
+    "create_out_of_stock_notification",
+    "create_replenishment_notification",
+    "create_purchase_order_status_notification",
+    "create_purchase_order_received_notification",
+    "create_forecast_generated_notification",
+    "check_and_trigger_stock_alerts",
+    "get_user_notifications",
+    "get_notification_by_id",
+    "count_unread_notifications",
+    "mark_notification_read",
+    "mark_all_notifications_read",
+    "get_target_users",
 ]

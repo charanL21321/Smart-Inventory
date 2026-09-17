@@ -10,6 +10,7 @@ from app.database.base import Base
 
 if TYPE_CHECKING:
     from app.models.inventory_transaction import InventoryTransaction
+    from app.models.notification import Notification
     from app.models.purchase_order import PurchaseOrder
     from app.models.sale import Sale
 
@@ -73,6 +74,11 @@ class User(Base):
         foreign_keys="PurchaseOrder.approved_by",
         back_populates="approver",
         cascade="none",
+    )
+    notifications: Mapped[List["Notification"]] = relationship(
+        "Notification",
+        back_populates="user",
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self) -> str:

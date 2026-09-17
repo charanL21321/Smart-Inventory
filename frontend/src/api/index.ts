@@ -8,3 +8,4 @@ export * from './sales';
 export * from './purchaseOrders';
 export * from './replenishment';
 export * from './forecast';
+export * from './notifications';

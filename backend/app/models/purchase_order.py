@@ -16,6 +16,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.base import Base
 
 if TYPE_CHECKING:
+    from app.models.notification import Notification
     from app.models.purchase_order_item import PurchaseOrderItem
     from app.models.supplier import Supplier
     from app.models.user import User
@@ -119,6 +120,11 @@ class PurchaseOrder(Base):
         "PurchaseOrderItem",
         back_populates="purchase_order",
         cascade="all, delete-orphan",
+    )
+    notifications: Mapped[List["Notification"]] = relationship(
+        "Notification",
+        back_populates="purchase_order",
+        cascade="none",
     )
 
     def __repr__(self) -> str:

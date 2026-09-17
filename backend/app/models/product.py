@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from app.models.demand_forecast import DemandForecast
     from app.models.inventory import Inventory
     from app.models.inventory_transaction import InventoryTransaction
+    from app.models.notification import Notification
     from app.models.purchase_order_item import PurchaseOrderItem
     from app.models.replenishment_recommendation import ReplenishmentRecommendation
     from app.models.sale import Sale
@@ -97,6 +98,11 @@ class Product(Base):
     )
     demand_forecasts: Mapped[List["DemandForecast"]] = relationship(
         "DemandForecast",
+        back_populates="product",
+        cascade="none",
+    )
+    notifications: Mapped[List["Notification"]] = relationship(
+        "Notification",
         back_populates="product",
         cascade="none",
     )

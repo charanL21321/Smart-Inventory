@@ -3,6 +3,11 @@
 from app.models.category import Category
 from app.models.inventory import Inventory
 from app.models.inventory_transaction import InventoryTransaction, TransactionType
+from app.models.notification import (
+    Notification,
+    NotificationPriority,
+    NotificationType,
+)
 from app.models.product import Product
 from app.models.purchase_order import PurchaseOrder, PurchaseOrderStatus
 from app.models.purchase_order_item import PurchaseOrderItem
@@ -41,4 +46,7 @@ __all__ = [
     "DemandForecastValue",
     "ForecastMethod",
     "ForecastStatus",
+    "Notification",
+    "NotificationType",
+    "NotificationPriority",
 ]

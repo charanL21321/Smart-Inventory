@@ -357,6 +357,10 @@ def update_purchase_order_status(
     po.status = target_status
     po.updated_at = datetime.now(timezone.utc)
 
+    # Trigger PURCHASE_ORDER_STATUS notification
+    from app.services.notification_service import create_purchase_order_status_notification
+    create_purchase_order_status_notification(db, po)
+
     try:
         db.commit()
         db.refresh(po)
@@ -480,11 +484,17 @@ def receive_purchase_order(
 
         # 6. Evaluate new purchase order status
         all_fully_received = all(item.received_quantity == item.quantity for item in po.items)
+        from app.services.notification_service import (
+            create_purchase_order_received_notification,
+            create_purchase_order_status_notification,
+        )
         if all_fully_received:
             po.status = PurchaseOrderStatus.RECEIVED
             po.received_at = now_dt
+            create_purchase_order_received_notification(db, po)
         else:
             po.status = PurchaseOrderStatus.PARTIALLY_RECEIVED
+            create_purchase_order_status_notification(db, po)
 
         po.updated_at = now_dt
 

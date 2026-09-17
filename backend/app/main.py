@@ -10,6 +10,7 @@ from app.api.routes import (
     categories,
     forecast,
     inventory,
+    notifications,
     products,
     purchase_orders,
     replenishment,
@@ -76,6 +77,7 @@ app.include_router(sales.router, prefix="/sales", tags=["Sales"])
 app.include_router(purchase_orders.router, prefix="/purchase-orders", tags=["Purchase Orders"])
 app.include_router(replenishment.router, prefix="/replenishment", tags=["Replenishment"])
 app.include_router(forecast.router, prefix="/forecast", tags=["Demand Forecasting"])
+app.include_router(notifications.router, prefix="/notifications", tags=["Notifications"])
 
 
 

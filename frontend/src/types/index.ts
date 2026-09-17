@@ -321,3 +321,34 @@ export interface DemandForecast {
   updated_at: string;
   values?: DemandForecastValue[];
 }
+
+export type NotificationType =
+  | 'LOW_STOCK'
+  | 'OUT_OF_STOCK'
+  | 'REPLENISHMENT_RECOMMENDATION'
+  | 'PURCHASE_ORDER_STATUS'
+  | 'PURCHASE_ORDER_RECEIVED'
+  | 'FORECAST_GENERATED';
+
+export type NotificationPriority = 'LOW' | 'MEDIUM' | 'HIGH';
+
+export interface Notification {
+  id: number;
+  user_id?: number;
+  notification_type: NotificationType;
+  priority: NotificationPriority;
+  title: string;
+  message: string;
+  product_id?: number | null;
+  supplier_id?: number | null;
+  purchase_order_id?: number | null;
+  replenishment_recommendation_id?: number | null;
+  forecast_id?: number | null;
+  is_read: boolean;
+  created_at: string;
+  read_at?: string | null;
+}
+
+export interface UnreadCountResponse {
+  unread_count: number;
+}

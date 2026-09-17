@@ -83,6 +83,10 @@ def create_sale(
             transaction.reference = f"SALE-{sale.id}"
             sale.reference = transaction.reference
 
+        # Check for low-stock / out-of-stock transitions
+        from app.services.notification_service import check_and_trigger_stock_alerts
+        check_and_trigger_stock_alerts(db, data.product_id)
+
         # 8. Commit atomically
         db.commit()
         db.refresh(sale)

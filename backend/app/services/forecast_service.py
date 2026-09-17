@@ -244,6 +244,11 @@ def generate_product_forecast(
         )
         db.add(val)
 
+    product = db.get(Product, product_id)
+    if product:
+        from app.services.notification_service import create_forecast_generated_notification
+        create_forecast_generated_notification(db, forecast, product)
+
     db.commit()
     db.refresh(forecast)
     return forecast

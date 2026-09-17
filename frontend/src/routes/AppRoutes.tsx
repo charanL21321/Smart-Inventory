@@ -17,6 +17,7 @@ import { PurchaseOrderDetail } from '../pages/PurchaseOrderDetail';
 import { Replenishment } from '../pages/Replenishment';
 import { Forecasts } from '../pages/Forecasts';
 import { ForecastDetail } from '../pages/ForecastDetail';
+import { Notifications } from '../pages/Notifications';
 import { Profile } from '../pages/Profile';
 import { FileQuestion, ArrowLeft } from 'lucide-react';
 
@@ -80,6 +81,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="replenishment" element={<Replenishment />} />
         <Route path="forecasts" element={<Forecasts />} />
         <Route path="forecasts/:id" element={<ForecastDetail />} />
+        <Route path="notifications" element={<Notifications />} />
         <Route path="profile" element={<Profile />} />
         <Route path="*" element={<NotFound />} />
       </Route>

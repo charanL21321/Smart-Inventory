@@ -18,6 +18,7 @@ from app.schemas.forecast import (
     ForecastMethod,
     ForecastStatus,
 )
+from app.schemas.notification import NotificationResponse, UnreadCountResponse
 from app.schemas.product import ProductCreate, ProductResponse, ProductUpdate
 from app.schemas.purchase_order import (
     PurchaseOrderCreate,
@@ -94,4 +95,7 @@ __all__ = [
     "DemandForecastValueResponse",
     "DemandForecastResponse",
     "DemandForecastDetailResponse",
+    # Notifications
+    "NotificationResponse",
+    "UnreadCountResponse",
 ]

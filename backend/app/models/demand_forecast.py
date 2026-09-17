@@ -17,6 +17,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.base import Base
 
 if TYPE_CHECKING:
+    from app.models.notification import Notification
     from app.models.product import Product
 
 
@@ -92,6 +93,11 @@ class DemandForecast(Base):
         back_populates="forecast",
         cascade="all, delete-orphan",
         order_by="DemandForecastValue.forecast_date",
+    )
+    notifications: Mapped[List["Notification"]] = relationship(
+        "Notification",
+        back_populates="forecast",
+        cascade="none",
     )
 
     def __repr__(self) -> str:

@@ -296,6 +296,9 @@ def generate_recommendations(db: Session) -> List[ReplenishmentRecommendation]:
                 updated_at=now_dt,
             )
             db.add(new_rec)
+            db.flush()
+            from app.services.notification_service import create_replenishment_notification
+            create_replenishment_notification(db, new_rec, prod)
             recommendations.append(new_rec)
 
     try:
